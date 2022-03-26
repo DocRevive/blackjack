@@ -42,6 +42,10 @@ public class Card
         this.suit = suit;
     }
 
+    /*
+     * Accessors
+     */
+
     /**
      * Returns a String representation of the card with
      * red/black ANSI color escape sequences, the rank, and
@@ -60,6 +64,26 @@ public class Card
          */
         return (suit < 2 ? "\u001B[41m" : "\u001B[40m")
                 + rank + "♥♦♣♠".charAt(suit) + "\u001B[0m";
+    }
+
+    /**
+     * Returns the numerical value of the card. 2-8 are just
+     * those numbers, face cards all equal 10, and aces are
+     * initially 11.
+     *
+     * @return numerical value of the card's rank
+     */
+    public int getValue()
+    {
+        try {
+            return Integer.parseInt(rank);
+        } catch (final NumberFormatException e) {
+            if (rank.equals("A")) {
+                return 11;
+            } else {
+                return 10;
+            }
+        }
     }
 
     /**
