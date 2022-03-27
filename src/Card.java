@@ -95,15 +95,4 @@ public class Card
     {
         return rank;
     }
-
-    /**
-     * Gets the suit index of the card.
-     *
-     * @return 0-3 number for the suit in this order:
-     *         hearts, diamonds, clubs, spades
-     */
-    public int getSuit()
-    {
-        return suit;
-    }
 }

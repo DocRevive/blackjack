@@ -1,3 +1,6 @@
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 /**
  * Keeps track of the player's bets and bankroll.
  * Blackjack pays 3 to 2
@@ -6,15 +9,15 @@
  * @version 3-25-22
  */
 public class Bankroll {
-    private int funds;
-    private int currentBet = -1;
+    private double funds;
+    private double currentBet = -1;
 
     /**
      * Constructor for Bankroll
      *
      * @param  funds  initial bankroll
      */
-    public Bankroll(int funds)
+    public Bankroll(double funds)
     {
         this.funds = funds;
     }
@@ -28,7 +31,7 @@ public class Bankroll {
      *
      * @return current balance
      */
-    public int getFunds()
+    public double getFunds()
     {
         return funds;
     }
@@ -38,7 +41,7 @@ public class Bankroll {
      *
      * @return current bet
      */
-    public int getCurrentBet()
+    public double getCurrentBet()
     {
         return currentBet;
     }
@@ -73,11 +76,11 @@ public class Bankroll {
     }
 
     /**
-     * Set the bet for the current round
+     * Set the bet for a new round.
      *
-     * @param  bet  numerical bet less than available funds
+     * @param  bet  numerical bet <= available funds
      */
-    public void setBet(int bet)
+    public void setBet(double bet)
     {
         if (funds < bet) {
             throw new IllegalArgumentException("Can't bet more than the current funds.");
@@ -85,5 +88,27 @@ public class Bankroll {
             funds -= bet;
             currentBet = bet;
         }
+    }
+
+    /*
+     * Static methods
+     */
+
+    /**
+     * Turn a double into a readable String currency value.
+     *
+     * @param  num  number to format
+     * @return      readable string
+     */
+    public static String formatMoney(double num)
+    {
+        NumberFormat commaGroupFormat = NumberFormat.getInstance();
+        commaGroupFormat.setGroupingUsed(true);
+
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        decimalFormat.setGroupingUsed(true);
+        decimalFormat.setGroupingSize(3);
+
+        return "$" + decimalFormat.format(num);
     }
 }
