@@ -59,7 +59,7 @@ public class Card
     {
         /*
          * Suits 0 and 1 are hearts and diamonds, so the red cards.
-         * 2 and 3 are black. \u001B[0m resets the current coloring
+         * 2 and 3 are black. "\u001B[0m" resets the current coloring
          * attribute set by 41 (red bg) or 40 (black bg).
          */
         return (suit < 2 ? "\u001B[41m" : "\u001B[40m")

@@ -4,8 +4,8 @@ import java.util.List;
 /**
  * The game of Blackjack in Java.
  * Rules: The dealer must draw to 16 and stand on all 17s,
- * the dealer peeks for blackjack, and only 3 splits at most
- * are allowed.
+ * the dealer peeks for blackjack, unlimited splits are
+ * allowed, and there is no surrender.
  *
  * @author Daniel Kim
  * @version 3-25-22
@@ -15,22 +15,29 @@ public class Blackjack
     private final List<Card> SHOE = new ArrayList<>();
     private final List<Hand> PLAYER_HANDS = new ArrayList<>();
     private final Hand DEALER_HAND = new Hand();
-    private final int numOfDecks;
-    private final int numOfHands = 2;
     private boolean isRoundOngoing = false;
     private int currentHandIndex = 0;
+    private int numOfHands = 1;
+    private int numOfDecks = 1;
+
+    /**
+     * Empty constructor
+     */
+    public Blackjack()
+    {}
 
     /**
      * Constructor for a game of Blackjack
      *
      * @param  numOfDecks  whole number of 52-card decks to use
+     * @param  numOfHands  number of hands to play (multi-hand)
      */
-    public Blackjack(int numOfDecks)
+    public Blackjack(int numOfDecks, int numOfHands)
     {
         this.numOfDecks = numOfDecks;
-        for (int i = 0; i < numOfHands; i++) {
-            PLAYER_HANDS.add(new Hand(1));
-        }
+        this.numOfHands = numOfHands;
+
+        resetHands();
     }
 
     /*
@@ -85,6 +92,16 @@ public class Blackjack
     public Hand getCurrentHand()
     {
         return PLAYER_HANDS.get(currentHandIndex);
+    }
+
+    /**
+     * Gets the number of hands being played
+     *
+     * @return number of hands
+     */
+    public int getNumOfHands()
+    {
+        return numOfHands;
     }
 
     /**
@@ -155,6 +172,38 @@ public class Blackjack
      */
 
     /**
+     * Sets the number of hands to play
+     *
+     * @param  num  number of hands (multi-hand)
+     */
+    public void setNumOfHands(int num)
+    {
+        if (num == 0) {
+            throw new IllegalArgumentException("Number of hands can't be 0");
+        } else if (isRoundOngoing) {
+            throw new UnsupportedOperationException("Can't set that during a round");
+        }
+
+        this.numOfHands = num;
+    }
+
+    /**
+     * Sets the number of decks to use
+     *
+     * @param  num  number of 52-card decks
+     */
+    public void setNumOfDecks(int num)
+    {
+        if (num == 0) {
+            throw new IllegalArgumentException("Number of decks can't be 0");
+        }
+
+        this.numOfDecks = num;
+        SHOE.clear();
+        fillShoe();
+    }
+
+    /**
      * Fills the shoe (box of cards) with the appropriate cards
      * of a 52-card deck for as many decks as there are
      */
@@ -184,13 +233,8 @@ public class Blackjack
      */
     public void deal()
     {
-        PLAYER_HANDS.clear();
-        DEALER_HAND.clearCards();
+        resetHands();
         isRoundOngoing = true;
-
-        for (int i = 0; i < numOfHands; i++) {
-            PLAYER_HANDS.add(new Hand(1));
-        }
         currentHandIndex = 0;
 
         /*
@@ -214,12 +258,28 @@ public class Blackjack
     }
 
     /**
+     * Clears the player's hands and puts numOfHands blank ones in
+     */
+    public void resetHands()
+    {
+        PLAYER_HANDS.clear();
+        DEALER_HAND.clearCards();
+        for (int i = 0; i < numOfHands; i++) {
+            PLAYER_HANDS.add(new Hand());
+        }
+    }
+
+    /**
      * Draws one card, removes it from the shoe, adds it to the
-     * provided hand. If checkForResolution is true, it resolves the hand
-     * if there is a bust or a blackjack. If there are no cards left
-     * in the shoe to draw, it is refilled.
+     * provided hand. If checkForResolution is true, it resolves
+     * the hand if there is a bust or a blackjack. If there are
+     * no cards left in the shoe to draw, it is refilled.
      *
-     * @param  hand  hand to transfer the card to
+     * @param  hand                hand to transfer the card to
+     * @param  checkForResolution  whether to check this hand for bust,
+     *                             win, or blackjack. If so, it will
+     *                             advance hands; resolveHand will
+     *                             check all subsequent hands.
      */
     public void draw(Hand hand, boolean checkForResolution)
     {
@@ -247,10 +307,22 @@ public class Blackjack
     {
         int dealerScore = Hand.handScore(DEALER_HAND, true);
 
-        // If no hands remain or dealer has blackjack
+        // If no hands remain
         if (PLAYER_HANDS.size() - 1 - currentHandIndex == 0) {
-            // If player has not busted
-            if (Hand.handScore(getCurrentHand(), true) <= 21) {
+            isRoundOngoing = false;
+            // If dealer has blackjack, can skip the next few lines
+            if (DEALER_HAND.isBlackjack()) return;
+
+            // If player has a hand that has not busted
+            boolean validHand = false;
+            for (Hand playerHand : PLAYER_HANDS) {
+                if (Hand.handScore(playerHand, true) <= 21) {
+                    validHand = true;
+                    break;
+                }
+            }
+
+            if (validHand) {
                 /*
                  * Dealers are bound by strict rules. They cannot hit on or
                  * after hard 17, and in some games (such as this one) not on
@@ -261,15 +333,16 @@ public class Blackjack
                     dealerScore = Hand.handScore(DEALER_HAND, true);
                 }
             }
-
-            isRoundOngoing = false;
         } else if (DEALER_HAND.isBlackjack()) {
+            // If dealer has blackjack, the round ends.
             isRoundOngoing = false;
+            // Take hand queue to the end
             currentHandIndex = PLAYER_HANDS.size() - 1;
         } else {
             /*
-             * Otherwise, move onto the next hand. Check the next hand for
-             * blackjack - if it is, resolve again.
+             * Otherwise, the player has won/busted/stood and there are
+             * remaining hands. Move onto the next hand, check the next
+             * hand for blackjack - if it is, resolve again.
              */
 
             currentHandIndex++;
@@ -302,9 +375,42 @@ public class Blackjack
         }
     }
 
+    /**
+     * Splits a splittable hand. Two initial identical cards in a
+     * hand are "split" to make two hands, one in each, and another
+     * card is drawn for each of them.
+     */
     public void split()
     {
+        Hand currentHand = getCurrentHand();
 
+        if (!currentHand.isSplittable()) return;
+
+        /*
+         * Create two new identical hands with each of the split cards.
+         * Both cards have the original bet, so the bet is effectively
+         * doubled.
+         */
+        Hand splitHand = new Hand(currentHand.getBetMultiplier(),
+                currentHand.getCards().get(0)
+        );
+        Hand splitHand2 = new Hand(splitHand);
+
+        PLAYER_HANDS.remove(currentHandIndex);
+
+        /*
+         * Add the two hands where currentHand used to be. splitHand
+         * will end up before splitHand2
+         */
+        PLAYER_HANDS.add(currentHandIndex, splitHand2);
+        PLAYER_HANDS.add(currentHandIndex, splitHand);
+
+        // Draw one card for each new hand
+        draw(splitHand, false);
+        draw(splitHand2, false);
+
+        // Check for player blackjacks starting from splitHand
+        if (splitHand.isBlackjack()) resolveHand();
     }
 
     /**
@@ -319,7 +425,7 @@ public class Blackjack
         if (currentHand.numberOfCards() != 2) return;
 
         // Double the former multiplier
-        currentHand.setMultiplierOfBet(2 * currentHand.getMultiplierOfBet());
+        currentHand.setBetMultiplier(2 * currentHand.getBetMultiplier());
 
         // Hit once and stand
         hit();
