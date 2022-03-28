@@ -41,7 +41,7 @@ public class Main {
                 boolean canSplit = canDouble && game.getCurrentHand().isSplittable();
 
                 // Presenting options based on standard rules
-                if (canDouble) {
+                if (canDouble && bankroll.canPayBet(1)) {
                     System.out.println("You can 'hit', 'double'"
                             + (canSplit ? ", 'split'" : "")
                             + ", or 'stand'.");
@@ -97,6 +97,8 @@ public class Main {
                 String[] command = input.nextLine().split(" ");
 
                 switch (command[0]) {
+                    case "exit":
+                        System.exit(0);
                     case "deal":
                         if (bankroll.canPayBet(game.getNumOfHands())) {
                             prevHand = 0;

@@ -250,10 +250,15 @@ public class Hand {
             // Both the player and the dealer have 21
             if (dealerCardsSize == cards.size()) {
                 return 3;
-            } else if (dealerCardsSize > cards.size()) {
+            } else if (dealerCardsSize == 2) {
+                // Only dealer has blackjack
                 return 0;
-            } else {
+            } else if (cards.size() == 2){
+                // Only player has blackjack
                 return 2;
+            } else {
+                // Both have 21
+                return 3;
             }
         } else {
             // Have same non-21 score
