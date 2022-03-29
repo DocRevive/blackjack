@@ -1,33 +1,28 @@
 import java.util.Arrays;
 
 /**
- * Card class that can represent individual cards in
- * a 52-card deck
+ * Record that represents individual cards of a 52-card deck.
  *
- * @author Daniel Kim
- * @version 3-25-22
+ * Suits:
+ *   0: Hearts
+ *   1: Diamonds
+ *   2: Clubs
+ *   3: Spades
+ *
+ * @param  rank         one of the 13 ranks (ace, king, ...)
+ * @param  suit         0-3 index for the suit in this order:
+ *                      hearts, diamonds, clubs, spades
  */
-public class Card
+public record Card(String rank, int suit)
 {
-    private final String rank;
-    private final int suit;
     /*
-     * Suits:
-     * 0: Hearts
-     * 1: Diamonds
-     * 2: Clubs
-     * 3: Spades
+     *
      */
 
     /**
      * Constructor for a card
-     *
-     * @param  rank         one of the 13 ranks (ace, king, ...)
-     * @param  suit         0-3 index for the suit in this order:
-     *                      hearts, diamonds, clubs, spades
      */
-    public Card(String rank, int suit)
-    {
+    public Card {
         String[] validRanks = new String[]
                 {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
         if (!Arrays.asList(validRanks).contains(rank)) {
@@ -38,8 +33,6 @@ public class Card
             throw new IllegalArgumentException("Suit is out of bounds, must be a number 0-3 for hearts, diamonds, clubs, and spades, respectively");
         }
 
-        this.rank = rank;
-        this.suit = suit;
     }
 
     /*
@@ -49,8 +42,8 @@ public class Card
     /**
      * Returns a String representation of the card with
      * red/black ANSI color escape sequences, the rank, and
-     * the symbol of the suit. Hearts & diamonds are red,
-     * clubs & spades are black.
+     * the symbol of the suit. Hearts &amp; diamonds are red,
+     * clubs &amp; spades are black.
      *
      * @return the rank and the suit highlighted in red or black
      */

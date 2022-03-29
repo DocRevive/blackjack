@@ -45,7 +45,7 @@ public class Blackjack
      */
 
     /**
-     * Gets whether a round is ongoing
+     * Gets whether a round is ongoing.
      *
      * @return whether the round is in progress
      */
@@ -55,7 +55,7 @@ public class Blackjack
     }
 
     /**
-     * Gets the dealer's hand
+     * Gets the dealer's hand.
      *
      * @return dealer's Hand object
      */
@@ -65,7 +65,7 @@ public class Blackjack
     }
 
     /**
-     * Gets a list of the hands in the current round
+     * Gets a list of the hands in the current round.
      *
      * @return index of hand in PLAYER_HANDS
      */
@@ -75,7 +75,7 @@ public class Blackjack
     }
 
     /**
-     * Gets the index of the hand the player is currently playing
+     * Gets the index of the hand the player is currently playing.
      *
      * @return index of the player's hands
      */
@@ -85,7 +85,7 @@ public class Blackjack
     }
 
     /**
-     * Gets the hand the player is currently playing
+     * Gets the hand the player is currently playing.
      *
      * @return current player Hand
      */
@@ -95,7 +95,7 @@ public class Blackjack
     }
 
     /**
-     * Gets the number of hands being played
+     * Gets the number of hands being played.
      *
      * @return number of hands
      */
@@ -105,10 +105,10 @@ public class Blackjack
     }
 
     /**
-     * String status of the round - current hands, which hands have
-     * won/lost and how, or if it is still the player's turn, the
-     * number of cards left in the shoe, and how many hands left to
-     * play.
+     * Returns the String status of the round - current hands,
+     * which hands have won/lost and how, or if it is still the
+     * player's turn, the number of cards left in the shoe, and
+     * how many hands left to play.
      *
      * @return information about the current round
      */
@@ -172,7 +172,7 @@ public class Blackjack
      */
 
     /**
-     * Sets the number of hands to play
+     * Sets the number of hands to play.
      *
      * @param  num  number of hands (multi-hand)
      */
@@ -188,7 +188,7 @@ public class Blackjack
     }
 
     /**
-     * Sets the number of decks to use
+     * Sets the number of decks to use.
      *
      * @param  num  number of 52-card decks
      */
@@ -205,7 +205,7 @@ public class Blackjack
 
     /**
      * Fills the shoe (box of cards) with the appropriate cards
-     * of a 52-card deck for as many decks as there are
+     * of a 52-card deck for as many decks as there are.
      */
     public void fillShoe()
     {
@@ -258,7 +258,7 @@ public class Blackjack
     }
 
     /**
-     * Clears the player's hands and puts numOfHands blank ones in
+     * Clears the player's hands and puts numOfHands blank ones in.
      */
     public void resetHands()
     {
@@ -270,7 +270,7 @@ public class Blackjack
     }
 
     /**
-     * Draws one card, removes it from the shoe, adds it to the
+     * Draws one card, removes it from the shoe, and adds it to the
      * provided hand. If checkForResolution is true, it resolves
      * the hand if there is a bust or a blackjack. If there are
      * no cards left in the shoe to draw, it is refilled.
@@ -298,7 +298,7 @@ public class Blackjack
     }
 
     /**
-     * Move onto the next hand. If there are none left, ends the player's
+     * Moves onto the next hand. If there are none left, ends the player's
      * turn and goes through the dealer's. The dealer will automatically
      * draw cards, continuing to do so until the score is at least a hard/soft
      * 17 (rules).
@@ -354,7 +354,7 @@ public class Blackjack
 
     /**
      * Ends the player's turn and resolves the hand, moving onto
-     * the next or, if there are none, letting the dealer draw.
+     * the next. If there are none, it lets the dealer draw.
      */
     public void stand()
     {
@@ -362,8 +362,8 @@ public class Blackjack
     }
 
     /**
-     * If a game is ongoing and the player hasn't busted, draw
-     * a card and add it to the hand.
+     * Draws a card and adds it to the hand if a game is ongoing
+     * and the player hasn't busted.
      */
     public void hit()
     {
@@ -414,9 +414,9 @@ public class Blackjack
     }
 
     /**
-     * Double down on a bet. This means doubling the bet on the hand,
+     * Doubles down on a bet. This means doubling the bet on the hand,
      * hitting once, then standing. Can only happen when there are
-     * two cards
+     * two cards.
      */
     public void doubleDown()
     {

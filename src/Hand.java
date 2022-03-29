@@ -1,6 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents individual Blackjack hands.
+ *
+ * @author Daniel Kim
+ * @version 3-25-22
+ */
 public class Hand {
     private final List<Card> cards;
     private double betMultiplier = 1;
@@ -42,10 +48,10 @@ public class Hand {
      *
      * @param  hand       hand to analyze
      * @param  scoreOnly  whether to disregard the distinction between
-     *                    soft & hard hands and return the score only
+     *                    soft and hard hands and return the score only
      * @return            positive number for hard hands, negative number
      *                    for soft hands (score is the absolute value),
-     *                    0 is an empty hand, and a number > 21 is bust
+     *                    0 is an empty hand, and a number &gt; 21 is bust
      */
     public static int handScore(Hand hand, boolean scoreOnly)
     {
@@ -123,7 +129,7 @@ public class Hand {
     }
 
     /**
-     * Gets the current multiplier of the original bet for this hand
+     * Gets the current multiplier of the original bet for this hand.
      *
      * @return how much of the original bet that this
      *         hand is worth. double = *2
@@ -145,7 +151,7 @@ public class Hand {
 
     /**
      * Determines whether the hand is a blackjack, or has two cards
-     * whose values add up to 21 (ace & 10 or face card).
+     * whose values add up to 21 (ace &amp; 10 or face card).
      *
      * @return whether hand is blackjack
      */
@@ -247,8 +253,8 @@ public class Hand {
         } else if (dealerScore > playerScore) {
             return 0;
         } else if (dealerScore == 21) {
-            // Both the player and the dealer have 21
             if (dealerCardsSize == cards.size()) {
+                // Both the player and the dealer have 21
                 return 3;
             } else if (dealerCardsSize == 2) {
                 // Only dealer has blackjack
@@ -287,8 +293,8 @@ public class Hand {
         } else if (dealerScore > playerScore) {
             return dealerHand.isBlackjack() ? "Dealer blackjack! The dealer won." : "The dealer won.";
         } else if (dealerScore == 21) {
-            // Both the player and the dealer have 21
             if (dealerCardsSize == cards.size()) {
+                // Both the player and the dealer have 21
                 return "Push! You tied.";
             } else if (dealerCardsSize == 2) {
                 // Only dealer has blackjack
@@ -332,7 +338,7 @@ public class Hand {
      * Sets a new multiplier of the original bet for this hand.
      *
      * @param  betMultiplier  how much of the original bet that this
-     *                          hand is worth. double = *2
+     *                        hand is worth. double = *2
      */
     public void setBetMultiplier(double betMultiplier)
     {

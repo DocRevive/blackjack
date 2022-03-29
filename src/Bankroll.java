@@ -88,25 +88,22 @@ public class Bankroll {
         double betChange = betMultiplier * currentBet;
 
         switch (winType) {
-            case 1:
-                // Profit is original bet, also returns original bet
-                funds += 2 * betChange;
-                break;
-            case 2:
-                // Blackjack pays 3:2, also returns original bet
-                funds += 2.5 * betChange;
-                break;
-            case 3:
-                // Tied, so bet is returned
-                funds += betChange;
-                break;
+            case 1 ->
+                    // Profit is original bet, also returns original bet
+                    funds += 2 * betChange;
+            case 2 ->
+                    // Blackjack pays 3:2, also returns original bet
+                    funds += 2.5 * betChange;
+            case 3 ->
+                    // Tied, so bet is returned
+                    funds += betChange;
         }
     }
 
     /**
-     * Set the bet for a new round.
+     * Sets the bet for a new round.
      *
-     * @param  bet         numerical bet * numOfHands <= available funds
+     * @param  bet         numerical bet * numOfHands &lt;= available funds
      */
     public void setBet(double bet)
     {
@@ -114,7 +111,7 @@ public class Bankroll {
     }
 
     /**
-     * Pays an additional unit of currentBet
+     * Pays an additional unit of currentBet.
      */
     public void payBet()
     {
@@ -122,7 +119,7 @@ public class Bankroll {
     }
 
     /**
-     * Pays a number of units of currentBet
+     * Pays a number of units of currentBet.
      *
      * @param  numOfTimes  number of times to pay the bet
      */
@@ -136,7 +133,7 @@ public class Bankroll {
      */
 
     /**
-     * Turn a double into a readable String currency value.
+     * Turns a double into a readable String currency value.
      *
      * @param  num  number to format
      * @return      readable string

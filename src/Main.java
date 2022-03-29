@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 /**
- * Provides terminal user interface for Blackjack
+ * Provides terminal user interface for Blackjack.
  *
  * @author Daniel Kim
  * @version 3-25-22
@@ -212,7 +212,7 @@ public class Main {
     }
 
     /**
-     * Repeatedly prompts user for a valid number
+     * Repeatedly prompts user for a valid number.
      *
      * @param  prompt     the kind of input requested
      * @param  isInteger  true if number should be an integer, false if a double
