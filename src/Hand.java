@@ -290,10 +290,15 @@ public class Hand {
             // Both the player and the dealer have 21
             if (dealerCardsSize == cards.size()) {
                 return "Push! You tied.";
-            } else if (dealerCardsSize > cards.size()) {
+            } else if (dealerCardsSize == 2) {
+                // Only dealer has blackjack
                 return "Dealer blackjack! You lost.";
-            } else {
+            } else if (cards.size() == 2){
+                // Only player has blackjack
                 return "Blackjack! You won!";
+            } else {
+                // Both have 21
+                return "Push! You tied.";
             }
         } else {
             // Have same non-21 score
