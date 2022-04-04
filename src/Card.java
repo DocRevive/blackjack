@@ -15,14 +15,11 @@ import java.util.Arrays;
  */
 public record Card(String rank, int suit)
 {
-    /*
-     *
-     */
-
     /**
      * Constructor for a card
      */
-    public Card {
+    public Card
+    {
         String[] validRanks = new String[]
                 {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
         if (!Arrays.asList(validRanks).contains(rank)) {
@@ -32,7 +29,6 @@ public record Card(String rank, int suit)
         if (suit < 0 || suit > 3) {
             throw new IllegalArgumentException("Suit is out of bounds, must be a number 0-3 for hearts, diamonds, clubs, and spades, respectively");
         }
-
     }
 
     /*

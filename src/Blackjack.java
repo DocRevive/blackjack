@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The game of Blackjack in Java.
+ * Can represent an individual blackjack table.
  * Rules: The dealer must draw to 16 and stand on all 17s,
  * the dealer peeks for blackjack, unlimited splits are
  * allowed, and there is no surrender.
@@ -12,9 +12,9 @@ import java.util.List;
  */
 public class Blackjack
 {
-    private final List<Card> SHOE = new ArrayList<>();
-    private final List<Hand> PLAYER_HANDS = new ArrayList<>();
-    private final Hand DEALER_HAND = new Hand();
+    private final List<Card> SHOE;
+    private final List<Hand> PLAYER_HANDS;
+    private final Hand DEALER_HAND;
     private boolean isRoundOngoing = false;
     private int currentHandIndex = 0;
     private int numOfHands = 1;
@@ -24,20 +24,30 @@ public class Blackjack
      * Empty constructor
      */
     public Blackjack()
-    {}
+    {
+        DEALER_HAND = new Hand();
+        PLAYER_HANDS = new ArrayList<>();
+        SHOE = new ArrayList<>();
+    }
 
     /**
-     * Constructor for a game of Blackjack
+     * Copy constructor
      *
-     * @param  numOfDecks  whole number of 52-card decks to use
-     * @param  numOfHands  number of hands to play (multi-hand)
+     * @param  table  Blackjack table to copy
      */
-    public Blackjack(int numOfDecks, int numOfHands)
+    public Blackjack(Blackjack table)
     {
-        this.numOfDecks = numOfDecks;
-        this.numOfHands = numOfHands;
+        SHOE = new ArrayList<>(table.getShoe());
+        PLAYER_HANDS = new ArrayList<>();
+        DEALER_HAND = new Hand(table.getDealerHand());
+        isRoundOngoing = table.isRoundOngoing();
+        currentHandIndex = table.getCurrentHandIndex();
+        numOfHands = table.getNumOfHands();
+        numOfDecks = table.getNumOfDecks();
 
-        resetHands();
+        for (Hand hand : table.getPlayerHands()) {
+            PLAYER_HANDS.add(new Hand(hand));
+        }
     }
 
     /*
@@ -103,6 +113,23 @@ public class Blackjack
     {
         return numOfHands;
     }
+
+    /**
+     * Gets the number of decks being used.
+     *
+     * @return number of 52-card decks
+     */
+    public int getNumOfDecks()
+    {
+        return numOfDecks;
+    }
+
+    /**
+     * Gets the current shoe
+     *
+     * @return shoe of cards
+     */
+    public List<Card> getShoe() { return SHOE; }
 
     /**
      * Returns the String status of the round - current hands,
@@ -258,11 +285,20 @@ public class Blackjack
     }
 
     /**
-     * Clears the player's hands and puts numOfHands blank ones in.
+     * Clears the player's hands.
+     */
+    public void resetPlayerHands()
+    {
+        PLAYER_HANDS.clear();
+    }
+
+    /**
+     * Clears the player and dealer hands and puts numOfHands
+     * blank ones into the player's hand.
      */
     public void resetHands()
     {
-        PLAYER_HANDS.clear();
+        resetPlayerHands();
         DEALER_HAND.clearCards();
         for (int i = 0; i < numOfHands; i++) {
             PLAYER_HANDS.add(new Hand());
@@ -285,14 +321,14 @@ public class Blackjack
     {
         int cardIndex = (int)
                 (Math.random() * SHOE.size()); // Get a random card
-        hand.addCard(SHOE.get(cardIndex));         // Add it to the hand
+        hand.addCard(SHOE.get(cardIndex));     // Add it to the hand
         SHOE.remove(cardIndex);                // Remove it from the shoe
 
         if (SHOE.size() == 0) {
             fillShoe();
         }
 
-        if (checkForResolution && Hand.handScore(hand, true) >= 21) {
+        if (checkForResolution && hand.handScore(true) >= 21) {
             resolveHand();
         }
     }
@@ -305,7 +341,7 @@ public class Blackjack
      */
     public void resolveHand()
     {
-        int dealerScore = Hand.handScore(DEALER_HAND, true);
+        int dealerScore = DEALER_HAND.handScore(true);
 
         // If no hands remain
         if (PLAYER_HANDS.size() - 1 - currentHandIndex == 0) {
@@ -316,7 +352,7 @@ public class Blackjack
             // If player has a hand that has not busted
             boolean validHand = false;
             for (Hand playerHand : PLAYER_HANDS) {
-                if (Hand.handScore(playerHand, true) <= 21) {
+                if (playerHand.handScore(true) <= 21) {
                     validHand = true;
                     break;
                 }
@@ -330,7 +366,7 @@ public class Blackjack
                  */
                 while (dealerScore < 17) {
                     draw(DEALER_HAND, false);
-                    dealerScore = Hand.handScore(DEALER_HAND, true);
+                    dealerScore = DEALER_HAND.handScore(true);
                 }
             }
         } else if (DEALER_HAND.isBlackjack()) {
@@ -367,7 +403,7 @@ public class Blackjack
      */
     public void hit()
     {
-        int playerScore = Hand.handScore(getCurrentHand(), false);
+        int playerScore = getCurrentHand().handScore(false);
 
         // If hand isn't empty (game ongoing) and player hasn't busted
         if (playerScore != 0 && playerScore <= 21) {

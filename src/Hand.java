@@ -8,14 +8,14 @@ import java.util.List;
  * @version 3-25-22
  */
 public class Hand {
-    private final List<Card> cards;
+    private final List<Card> CARDS;
     private double betMultiplier = 1;
 
     /**
      * Default constructor
      */
     public Hand() {
-        this.cards = new ArrayList<>();
+        this.CARDS = new ArrayList<>();
     }
 
     /**
@@ -28,8 +28,8 @@ public class Hand {
     public Hand(double betMultiplier, Card firstCard)
     {
         this.betMultiplier = betMultiplier;
-        this.cards = new ArrayList<>();
-        this.cards.add(firstCard);
+        this.CARDS = new ArrayList<>();
+        this.CARDS.add(firstCard);
     }
 
     /**
@@ -40,20 +40,23 @@ public class Hand {
     public Hand(Hand hand)
     {
         this.betMultiplier = hand.getBetMultiplier();
-        this.cards = new ArrayList<>(hand.getCards());
+        this.CARDS = new ArrayList<>(hand.getCards());
     }
 
+    /*
+     * Accessors
+     */
+
     /**
-     * Determines the score of a hand.
+     * Determines the score of the hand.
      *
-     * @param  hand       hand to analyze
      * @param  scoreOnly  whether to disregard the distinction between
      *                    soft and hard hands and return the score only
      * @return            positive number for hard hands, negative number
      *                    for soft hands (score is the absolute value),
      *                    0 is an empty hand, and a number &gt; 21 is bust
      */
-    public static int handScore(Hand hand, boolean scoreOnly)
+    public int handScore(boolean scoreOnly)
     {
         int sum = 0;
         boolean isSoft = false;
@@ -69,7 +72,7 @@ public class Hand {
          * Soft = flexible, hard = fixed
          */
 
-        for (Card card : hand.getCards()) {
+        for (Card card : CARDS) {
             int nextAddition = card.getValue();
 
             if (nextAddition == 11) {
@@ -114,10 +117,6 @@ public class Hand {
         return scoreOnly ? sum : (isSoft ? -sum : sum);
     }
 
-    /*
-     * Accessors
-     */
-
     /**
      * Gets the list of cards.
      *
@@ -125,7 +124,7 @@ public class Hand {
      */
     public List<Card> getCards()
     {
-        return cards;
+        return CARDS;
     }
 
     /**
@@ -146,7 +145,7 @@ public class Hand {
      */
     public int numberOfCards()
     {
-        return cards.size();
+        return CARDS.size();
     }
 
     /**
@@ -157,7 +156,7 @@ public class Hand {
      */
     public boolean isBlackjack()
     {
-        return cards.size() == 2 && Hand.handScore(this, true) == 21;
+        return CARDS.size() == 2 && handScore(true) == 21;
     }
 
     /**
@@ -168,8 +167,8 @@ public class Hand {
      */
     public boolean isSplittable()
     {
-        if (cards.size() == 2) {
-            return cards.get(0).getRank().equals(cards.get(1).getRank());
+        if (CARDS.size() == 2) {
+            return CARDS.get(0).getRank().equals(CARDS.get(1).getRank());
         }
 
         return false;
@@ -184,7 +183,7 @@ public class Hand {
     public String toString()
     {
         StringBuilder result = new StringBuilder();
-        int playerScore = Hand.handScore(this, false);
+        int playerScore = handScore(false);
 
         if (isBlackjack()) {
             result.append("Blackjack\n");
@@ -193,7 +192,7 @@ public class Hand {
                     .append(Math.abs(playerScore)).append("\n");
         }
 
-        for (Card card : cards) {
+        for (Card card : CARDS) {
             result.append(card).append(" ");
         }
 
@@ -212,7 +211,7 @@ public class Hand {
      */
     public String toString(boolean isRoundOngoing)
     {
-        if (isRoundOngoing && cards.size() == 2) {
+        if (isRoundOngoing && CARDS.size() == 2) {
             /*
              * The shown score (cards.get(0)) is just the value of the first
              * card. It shouldn't reveal the value of the whole hand.
@@ -221,7 +220,7 @@ public class Hand {
              * black & reset, respectively. The two dashes are a placeholder
              * for the actual rank and suit.
              */
-            return cards.get(0).getValue() + "\n" + cards.get(0)
+            return CARDS.get(0).getValue() + "\n" + CARDS.get(0)
                     + " \u001B[40m--\u001B[0m";
         } else {
             // Round is over so everything can be shown
@@ -238,8 +237,8 @@ public class Hand {
      */
     public int determineHandResult(Hand dealerHand)
     {
-        int playerScore = Hand.handScore(this, true);
-        int dealerScore = Hand.handScore(dealerHand, true);
+        int playerScore = handScore(true);
+        int dealerScore = dealerHand.handScore(true);
         int dealerCardsSize = dealerHand.numberOfCards();
 
         if (playerScore == 0 || dealerScore == 0) return 0;
@@ -253,13 +252,13 @@ public class Hand {
         } else if (dealerScore > playerScore) {
             return 0;
         } else if (dealerScore == 21) {
-            if (dealerCardsSize == cards.size()) {
+            if (dealerCardsSize == CARDS.size()) {
                 // Both the player and the dealer have 21
                 return 3;
             } else if (dealerCardsSize == 2) {
                 // Only dealer has blackjack
                 return 0;
-            } else if (cards.size() == 2){
+            } else if (CARDS.size() == 2){
                 // Only player has blackjack
                 return 2;
             } else {
@@ -280,8 +279,8 @@ public class Hand {
      */
     public String determineResultReason(Hand dealerHand)
     {
-        int playerScore = Hand.handScore(this, true);
-        int dealerScore = Hand.handScore(dealerHand, true);
+        int playerScore = handScore(true);
+        int dealerScore = dealerHand.handScore(true);
         int dealerCardsSize = dealerHand.numberOfCards();
 
         if (playerScore > 21) {
@@ -293,13 +292,13 @@ public class Hand {
         } else if (dealerScore > playerScore) {
             return dealerHand.isBlackjack() ? "Dealer blackjack! The dealer won." : "The dealer won.";
         } else if (dealerScore == 21) {
-            if (dealerCardsSize == cards.size()) {
+            if (dealerCardsSize == CARDS.size()) {
                 // Both the player and the dealer have 21
                 return "Push! You tied.";
             } else if (dealerCardsSize == 2) {
                 // Only dealer has blackjack
                 return "Dealer blackjack! You lost.";
-            } else if (cards.size() == 2){
+            } else if (CARDS.size() == 2){
                 // Only player has blackjack
                 return "Blackjack! You won!";
             } else {
@@ -323,7 +322,7 @@ public class Hand {
      */
     public void addCard(Card card)
     {
-        this.cards.add(card);
+        this.CARDS.add(card);
     }
 
     /**
@@ -331,7 +330,7 @@ public class Hand {
      */
     public void clearCards()
     {
-        this.cards.clear();
+        this.CARDS.clear();
     }
 
     /**
