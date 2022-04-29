@@ -53,6 +53,7 @@ public class Main {
 
                 switch (command) {
                     case "exit":
+                        input.close();
                         System.exit(0);
                     case "hit":
                         game.hit();
@@ -98,6 +99,7 @@ public class Main {
 
                 switch (command[0]) {
                     case "exit":
+                        input.close();
                         System.exit(0);
                     case "deal":
                         if (bankroll.canPayBet(game.getNumOfHands())) {
