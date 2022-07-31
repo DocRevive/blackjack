@@ -19,16 +19,20 @@ public class Main {
         // Initialize blackjack settings
         game.setNumOfDecks(
                 Integer.parseInt(
-                        valuePrompt("Number of decks:", true)));
+                        valuePrompt("Number of decks:", 1)));
 
         game.setNumOfHands(
                 Integer.parseInt(
-                        valuePrompt("Number of hands:", true)));
+                        valuePrompt("Number of hands:", 1)));
 
         // Initialize bankroll
         bankroll.setFunds(
                 Double.parseDouble(
-                        valuePrompt("Initial bankroll:", false)));
+                        valuePrompt("Initial bankroll:", 2)));
+
+        // Choose whether to offer "simulate" option
+        boolean canSimulate = "y".equalsIgnoreCase(
+                valuePrompt("Enable simulate (cheat) option? [Y/N]", 0));
 
         prevBal = bankroll.getFunds();
         System.out.println("You can 'set-bet ($)', 'deal', 'set-hands (#)', or 'set-decks (#)'.");
@@ -44,9 +48,12 @@ public class Main {
                 if (canDouble && bankroll.canPayBet(1)) {
                     System.out.println("You can 'hit', 'double'"
                             + (canSplit ? ", 'split'" : "")
+                            + (canSimulate ? ", 'simulate'" : "")
                             + ", or 'stand'.");
                 } else {
-                    System.out.println("You can 'hit' or 'stand'.");
+                    System.out.println("You can 'hit'"
+                            + (canSimulate ? ", 'simulate'," : "")
+                            + " or 'stand'.");
                 }
 
                 String command = input.nextLine();
@@ -61,20 +68,28 @@ public class Main {
                     case "stand":
                         game.stand();
                         break;
+                    case "simulate":
+                        if (canSimulate) {
+                            System.out.println("\n======= Simulation Results =======\n");
+                            System.out.println(Simulator.simulate(game, 10000));
+                            System.out.println("\n=== Your hand has not changed. ===\n");
+                            break;
+                        }
+                        // If simulate not enabled, fall through to default
                     case "double":
                         if (canDouble && bankroll.canPayBet(1)) {
                             game.doubleDown();
                             bankroll.payBet();
                             break;
                         }
-                        // If not, fall through to default
+                        // If can't double, fall through to default
                     case "split":
                         if (canSplit && bankroll.canPayBet(1)) {
                             game.split();
                             bankroll.payBet();
                             break;
                         }
-                        // If not, fall through to default
+                        // If can't split, fall through to default
                     default:
                         System.out.println("Not an option.");
                         continue;
@@ -167,7 +182,7 @@ public class Main {
                         System.out.println("You can 'set-bet ($)', 'deal', 'set-hands (#)', or 'set-decks (#)'.");
                         break;
                     default:
-                        System.out.println("Not an option.");
+                        System.out.println("Not an option. Say 'help' to see the commands");
                         break;
                 }
             }
@@ -217,15 +232,16 @@ public class Main {
      * Repeatedly prompts user for a valid number.
      *
      * @param  prompt     the kind of input requested
-     * @param  isInteger  true if number should be an integer, false if a double
-     * @return            valid number as a String
+     * @param  ansType    0 if input should be a string, 1 for an integer, and 2 for a double
+     * @return            valid type as a string or null
      */
-    public static String valuePrompt(String prompt, boolean isInteger)
+    public static String valuePrompt(String prompt, int ansType)
     {
         do {
             System.out.println(prompt);
             String ans = input.nextLine();
-            if (isNumber(ans, isInteger)) {
+
+            if (ansType == 0 || isNumber(ans, ansType == 1)) {
                 return ans;
             } else {
                 System.out.println("Must be a number.");

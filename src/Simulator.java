@@ -5,6 +5,18 @@
  * @version 4-4-22
  */
 public class Simulator {
+    public static void main(String[] args)
+    {
+        // Test
+        Blackjack game = new Blackjack();
+        game.deal();
+        System.out.println(game);
+        System.out.println("\n===== 10,000 #1 =====\n");
+        System.out.println(simulate(game, 10000));
+        System.out.println("\n===== 10,000 #2 =====\n");
+        System.out.println(simulate(game, 10000));
+    }
+
     public static String simulate(Blackjack game, int iterations)
     {
         double better = 0;
@@ -23,7 +35,8 @@ public class Simulator {
 
             // Use only the current hand
             gameIteration.resetPlayerHands();
-            gameIteration.getPlayerHands().add(new Hand(currentHand));
+            gameIteration.getPlayerHands().add(new Hand(iterHand));
+            iterHand = gameIteration.getCurrentHand();
             gameIteration.hit();
 
             if (gameIteration.isRoundOngoing()) {
@@ -42,12 +55,12 @@ public class Simulator {
             }
         }
 
-        return "Better: " + round(better / iterations * 100)
-                + "%\nWorse: " + round(worse / iterations * 100)
+        return "Hitting results in a...\nBetter score: " + round(better / iterations * 100)
+                + "%\nWorse score: " + round(worse / iterations * 100)
                 + "%\nBlackjack: " + round(bj / iterations * 100)
-                + "%\nWon: " + round(won / iterations * 100)
-                + "%\nTied: " + round(tied / iterations * 100)
-                + "%\nLost: " + round(lost / iterations * 100) + "%";
+                + "%\nWin: " + round(won / iterations * 100)
+                + "%\nTie: " + round(tied / iterations * 100)
+                + "%\nLoss: " + round(lost / iterations * 100) + "%";
     }
 
     public static double round(double value)

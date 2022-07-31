@@ -28,6 +28,7 @@ public class Blackjack
         DEALER_HAND = new Hand();
         PLAYER_HANDS = new ArrayList<>();
         SHOE = new ArrayList<>();
+        fillShoe();
     }
 
     /**
@@ -77,7 +78,7 @@ public class Blackjack
     /**
      * Gets a list of the hands in the current round.
      *
-     * @return index of hand in PLAYER_HANDS
+     * @return all the player's hands in the current game
      */
     public List<Hand> getPlayerHands()
     {
